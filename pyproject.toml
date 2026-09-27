@@ -1,0 +1,69 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hierarchy-company"
+version = "2.1.0"
+description = "4-level hierarchical multi-agent system (CEO → Director → Team Supervisor → Specialist) on LangGraph"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langgraph>=1.0",
+    "langchain>=1.0",
+    "langchain-core>=1.0",
+    "langchain-openai>=1.0",
+    "pydantic>=2.7",
+    "python-dotenv>=1.0",
+    "httpx>=0.27",
+    "pyyaml>=6.0",
+    "sqlglot>=25",
+]
+
+[project.urls]
+Repository = "https://github.com/abh2050/agent-org-chart"
+
+[project.optional-dependencies]
+postgres = ["psycopg[binary]>=3.1"]
+aws = ["boto3>=1.34"]
+ui = ["streamlit>=1.40"]
+dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.6", "mypy>=1.10", "types-PyYAML"]
+
+[project.scripts]
+hierarchy-company = "hierarchy_company.cli:main"
+hierarchy-company-ui = "hierarchy_company.ui.launcher:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hierarchy_company"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-m 'not live'"
+markers = ["live: calls the real OpenAI API (gate G4)"]
+
+[tool.coverage.run]
+# The Streamlit page is executed by streamlit.testing.AppTest (tests/unit/test_stream_ui.py), which
+# coverage cannot trace; its logic lives in ui/services.py, which is measured.
+omit = ["*/hierarchy_company/ui/app.py"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]  # allow → and – in prompts/docstrings
+
+[tool.mypy]
+python_version = "3.12"  # third-party stubs (numpy via streamlit) need 3.12; ruff enforces py311 syntax
+ignore_missing_imports = true
+warn_unused_ignores = true
+
+[tool.ruff.lint.per-file-ignores]
+"src/hierarchy_company/tools/*" = ["E501"]  # templates and rule messages
+
+[[tool.mypy.overrides]]
+module = ["numpy", "numpy.*", "pandas", "pandas.*", "streamlit", "streamlit.*", "pyarrow", "pyarrow.*"]
+follow_imports = "skip"
+ignore_missing_imports = true

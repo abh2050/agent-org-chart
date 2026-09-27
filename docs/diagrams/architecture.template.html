@@ -1,0 +1,203 @@
+<title>hierarchy-company Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --paper: #F5F6F3; --panel: #FBFBF9; --card: #FFFFFF; --ink: #1B2230; --muted: #5B6474; --line: #C4C9D2;
+    --route: #0B7C6E; --routebg: #DDF1EC; --warn: #B7700B; --warnbg: #FBEFD9; --stop: #B83A33; --stopbg: #F8E1DF;
+    --sans: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif;
+    --cond: "IBM Plex Sans Condensed", "Arial Narrow", "IBM Plex Sans", sans-serif;
+    --mono: "IBM Plex Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --paper: #10141B; --panel: #141922; --card: #1A202B; --ink: #E5E8EE; --muted: #9AA3B2; --line: #3A4252;
+      --route: #3BBFA9; --routebg: #173A35; --warn: #E0A33C; --warnbg: #3A2E17; --stop: #E0675F; --stopbg: #3D1F1D;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: #10141B; --panel: #141922; --card: #1A202B; --ink: #E5E8EE; --muted: #9AA3B2; --line: #3A4252;
+    --route: #3BBFA9; --routebg: #173A35; --warn: #E0A33C; --warnbg: #3A2E17; --stop: #E0675F; --stopbg: #3D1F1D;
+  }
+
+  body { background: var(--paper); color: var(--ink); font: 15px/1.6 var(--sans); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 72px; display: grid; gap: 56px; }
+  h1, h2, h3 { font-family: var(--cond); line-height: 1.15; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(30px, 5vw, 44px); font-weight: 700; letter-spacing: -0.01em; }
+  h2 { font-size: 26px; font-weight: 600; }
+  h3 { font-size: 17px; font-weight: 600; }
+  p { margin: 0; max-width: 68ch; }
+  code, .mono { font-family: var(--mono); font-size: 0.88em; }
+  .eyebrow { font: 600 12px/1 var(--sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  section { display: grid; gap: 18px; }
+  header { display: grid; gap: 14px; }
+  .lede { font-size: 17px; color: var(--muted); }
+
+  .status { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+  .pill { display: inline-flex; align-items: baseline; gap: 8px; padding: 7px 12px; border-radius: 999px;
+          border: 1px solid var(--line); background: var(--card); font-size: 13px; }
+  .pill b { font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .pill.ok { border-color: var(--route); background: var(--routebg); }
+  .pill.ok b { color: var(--route); }
+
+  figure { margin: 0; display: grid; gap: 12px; }
+  .dg { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); }
+  .dg svg { display: block; width: 100%; min-width: 760px; height: auto; }
+  figcaption { color: var(--muted); font-size: 14px; max-width: 80ch; }
+  figcaption b { color: var(--ink); font-weight: 600; }
+
+  /* remap diagram colors to theme tokens */
+  .dg .bg { fill: var(--panel); }
+  .dg .f-paper { fill: var(--panel); } .dg .f-card { fill: var(--card); } .dg .f-ink { fill: var(--ink); }
+  .dg .f-muted { fill: var(--muted); } .dg .f-line { fill: var(--line); } .dg .f-route { fill: var(--route); }
+  .dg .f-routebg { fill: var(--routebg); } .dg .f-warn { fill: var(--warn); } .dg .f-warnbg { fill: var(--warnbg); }
+  .dg .f-stop { fill: var(--stop); } .dg .f-stopbg { fill: var(--stopbg); }
+  .dg .s-line { stroke: var(--line); } .dg .s-ink { stroke: var(--ink); } .dg .s-route { stroke: var(--route); }
+  .dg .s-warn { stroke: var(--warn); } .dg .s-stop { stroke: var(--stop); } .dg .s-muted { stroke: var(--muted); }
+  .dg circle.f-route + text, .dg circle.f-line + text { fill: var(--card); }
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font: 600 12px/1.3 var(--sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+       background: var(--panel); }
+  tr:last-child td { border-bottom: 0; }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .ok-text { color: var(--route); font-weight: 600; }
+  .warn-text { color: var(--warn); font-weight: 600; }
+
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .note { border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; background: var(--card);
+          display: grid; gap: 8px; }
+  .note ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+  .note.warn { border-color: var(--warn); }
+  footer { color: var(--muted); font-size: 13px; }
+</style>
+
+<main class="wrap">
+  <header>
+    <span class="eyebrow">LangGraph · 4-level hierarchical multi-agent system · v2.1.0</span>
+    <h1>hierarchy-company</h1>
+    <p class="lede">A CEO routes each task to one division director. The director routes it to one of six teams.
+      The team supervisor consults its specialists one at a time, and each specialist calls real tools.
+      Every decision is structured, bounded in code and recorded in a trace.</p>
+    <div class="status" aria-label="Current status">
+      <span class="pill ok">SDLC gates <b>6/6 GO</b></span>
+      <span class="pill ok">Unit tests <b>159 passed</b></span>
+      <span class="pill ok">Coverage <b>94%</b></span>
+      <span class="pill ok">Live OpenAI tests <b>42 passed</b></span>
+      <span class="pill ok">Routing <b>6/6</b></span>
+      <span class="pill">LLM calls per run <b>8–12</b></span>
+      <span class="pill">Web UI <b>Streamlit</b></span>
+    </div>
+  </header>
+
+  <section id="hierarchy">
+    <span class="eyebrow">Figure 1 · Structure</span>
+    <h2>One route through four levels</h2>
+    <figure>
+      <div class="dg">{{hierarchy}}</div>
+      <figcaption><b>Each level picks exactly one child.</b> A wrapper node (<code>call_operations</code>,
+        <code>call_security_team</code>) maps parent state into the child graph and returns only the child's new
+        trace entries. The trace in the panel is the one this route produces for “An AWS key was committed to GitHub”.
+        Only one team and at most three of the 18 specialists do any work in a run.</figcaption>
+    </figure>
+  </section>
+
+  <section id="team-loop">
+    <span class="eyebrow">Figure 2 · Team supervisor</span>
+    <h2>Why the loop always ends</h2>
+    <figure>
+      <div class="dg">{{team-loop}}</div>
+      <figcaption><b>The choice set shrinks every turn.</b> The supervisor's structured-output schema only offers
+        specialists that have not been consulted yet, so the model cannot pick one twice. When the turn cap (3) is hit
+        or everyone has been consulted, the code routes to <code>team_writer</code> without asking the model at all.</figcaption>
+    </figure>
+  </section>
+
+  <section id="tools">
+    <span class="eyebrow">Figure 3 · Tools</span>
+    <h2>36 real tools, and what happens when one can't answer</h2>
+    <figure>
+      <div class="dg">{{tools}}</div>
+      <figcaption><b>No tool returns made-up data.</b> Inputs are checked before any file, network or database access.
+        Analyzers compute from what the specialist passes in, such as a Dockerfile, a SQL query or an IAM policy.
+        Tools that depend on something outside the process say <code>UNAVAILABLE</code> with the reason, and the
+        specialist is instructed to report that rather than guess.</figcaption>
+    </figure>
+  </section>
+
+  <section id="gates">
+    <span class="eyebrow">Figure 4 · Delivery</span>
+    <h2>Built gate by gate</h2>
+    <figure>
+      <div class="dg">{{gates}}</div>
+      <figcaption><b>A gate decides from evidence, not opinion.</b> <code>python -m gates</code> runs the checks for each
+        SDLC phase in order and stops at the first NO-GO. The red markers are the NO-GO decisions that actually happened
+        while this project was built; each was fixed and the gate re-run before work moved on.</figcaption>
+    </figure>
+  </section>
+
+  <section id="results">
+    <span class="eyebrow">Results · 2026-09-27</span>
+    <h2>Test results</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Suite</th><th>What it proves</th><th>Tests</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>Unit · tools</td><td>Each of the 36 tools gives the right answer on real inputs, fails honestly, and never touches the network on bad input</td><td class="num">89</td><td class="ok-text">passed</td></tr>
+          <tr><td>Unit · graphs</td><td>Turn cap, no repeated specialist, one team per run, full 4-level trace order</td><td class="num">11</td><td class="ok-text">passed</td></tr>
+          <tr><td>Unit · prompts, config, CLI</td><td>Routing prompts, schemas, settings validation, <code>--attach</code>, error handling</td><td class="num">38</td><td class="ok-text">passed</td></tr>
+          <tr><td>Unit · stream + UI</td><td>Event stream order; the Streamlit page rendered headlessly: run, history, errors, key never shown</td><td class="num">18</td><td class="ok-text">passed</td></tr>
+          <tr><td>Unit · quality</td><td>No secrets in the source, <code>ruff</code> clean</td><td class="num">3</td><td class="ok-text">passed</td></tr>
+          <tr><td>Live · company</td><td>Six reference tasks end to end on <code>gpt-4.1-mini</code></td><td class="num">6</td><td class="ok-text">passed</td></tr>
+          <tr><td>Live · routing</td><td>CEO, director and supervisor decisions on 25 further tasks</td><td class="num">25</td><td class="ok-text">passed</td></tr>
+          <tr><td>Live · OpenAI</td><td>Auth, enum-constrained output, real tool calls, call counting</td><td class="num">6</td><td class="ok-text">passed</td></tr>
+          <tr><td>Live · tool honesty</td><td>Computes from supplied data, asks for missing files, reports unconfigured databases</td><td class="num">4</td><td class="ok-text">passed</td></tr>
+          <tr><td>Live · UI</td><td>The real Streamlit page runs the IAM example against OpenAI</td><td class="num">1</td><td class="ok-text">passed</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Reference tasks (live, latest G4 run)</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>ID</th><th>Task</th><th>Division</th><th>Team</th><th>LLM calls</th><th>Time</th></tr></thead>
+        <tbody>
+{{E2E_ROWS}}
+        </tbody>
+      </table>
+    </div>
+    <p>Every run finished with all three answer sections (Summary, Details, Routing Path), no specialist consulted
+      twice, and no claim that an action had been carried out.</p>
+  </section>
+
+  <section id="limits">
+    <span class="eyebrow">Scope</span>
+    <h2>What is verified and what is not</h2>
+    <div class="two">
+      <div class="note">
+        <h3>Verified</h3>
+        <ul>
+          <li>Routing, bounds and trace across all four levels, offline and live</li>
+          <li>Local analyzers against known answers, e.g. #777777 on white = 4.48:1</li>
+          <li>OSV.dev and GitHub Actions calls return live data</li>
+          <li>Honest failure paths: <code>UNAVAILABLE</code> and <code>INPUT NEEDED</code></li>
+        </ul>
+      </div>
+      <div class="note warn">
+        <h3>Not yet verified</h3>
+        <ul>
+          <li>Postgres and AWS IAM tools against real systems (tested with simulated responses only)</li>
+          <li>Answer quality: there is no graded golden set or repeated-run consistency check yet</li>
+          <li>Service concerns: the Streamlit UI has no authentication; no HTTP API, tracing or enforced cost ceiling</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>Generated from <code>docs/diagrams/build.py</code>. The same diagrams are embedded in the repository README as SVG files.</footer>
+</main>

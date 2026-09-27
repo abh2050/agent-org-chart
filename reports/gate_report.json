@@ -1,0 +1,220 @@
+{
+  "gates": [
+    {
+      "id": "G0",
+      "phase": "Requirements",
+      "decision": "GO",
+      "checks": [
+        {
+          "name": "docs/01_requirements.md exists",
+          "blocking": true,
+          "passed": true,
+          "evidence": "found",
+          "seconds": 0.0
+        },
+        {
+          "name": "every FR/NFR maps to an acceptance test",
+          "blocking": true,
+          "passed": true,
+          "evidence": "29 requirements, unmapped: none",
+          "seconds": 0.0
+        }
+      ],
+      "timestamp": "2026-09-27T20:07:17+00:00"
+    },
+    {
+      "id": "G1",
+      "phase": "Design",
+      "decision": "GO",
+      "checks": [
+        {
+          "name": "docs/02_design.md exists",
+          "blocking": true,
+          "passed": true,
+          "evidence": "found",
+          "seconds": 0.0
+        },
+        {
+          "name": "design has required sections",
+          "blocking": true,
+          "passed": true,
+          "evidence": "missing sections: none",
+          "seconds": 0.0
+        },
+        {
+          "name": "module map names the modules",
+          "blocking": true,
+          "passed": true,
+          "evidence": "28 modules named in the module map",
+          "seconds": 0.0
+        }
+      ],
+      "timestamp": "2026-09-27T20:07:17+00:00"
+    },
+    {
+      "id": "G2",
+      "phase": "Implementation",
+      "decision": "GO",
+      "checks": [
+        {
+          "name": "implementation conforms to design module map",
+          "blocking": true,
+          "passed": true,
+          "evidence": "designed modules missing from src: none",
+          "seconds": 0.0
+        },
+        {
+          "name": "ruff lint clean",
+          "blocking": true,
+          "passed": true,
+          "evidence": "All checks passed!",
+          "seconds": 0.03
+        },
+        {
+          "name": "package imports without an API key",
+          "blocking": true,
+          "passed": true,
+          "evidence": "ok",
+          "seconds": 0.55
+        },
+        {
+          "name": "all 9 graphs compile",
+          "blocking": true,
+          "passed": true,
+          "evidence": "teams/directors/company = 6/2/1",
+          "seconds": 0.73
+        },
+        {
+          "name": "org registry is 1/2/6/18 with 2 documented tools each",
+          "blocking": true,
+          "passed": true,
+          "evidence": "1 CEO / 2 directors / 6 teams / 18 specialists; specialists without 2 documented tools: none",
+          "seconds": 0.35
+        },
+        {
+          "name": "mypy type check clean",
+          "blocking": false,
+          "passed": true,
+          "evidence": "Success: no issues found in 28 source files",
+          "seconds": 1.07
+        }
+      ],
+      "timestamp": "2026-09-27T20:29:45+00:00"
+    },
+    {
+      "id": "G3",
+      "phase": "Verification",
+      "decision": "GO",
+      "checks": [
+        {
+          "name": "offline unit tests pass with \u226585% coverage",
+          "blocking": true,
+          "passed": true,
+          "evidence": "159 passed in 3.42s; coverage 94% (min 85%)",
+          "seconds": 4.44
+        },
+        {
+          "name": "every acceptance test id is covered by a test",
+          "blocking": true,
+          "passed": true,
+          "evidence": "28/28 AT ids referenced by tests; missing: none",
+          "seconds": 0.0
+        }
+      ],
+      "timestamp": "2026-09-27T20:29:48+00:00"
+    },
+    {
+      "id": "G4",
+      "phase": "Validation",
+      "decision": "GO",
+      "checks": [
+        {
+          "name": "OpenAI API key available",
+          "blocking": true,
+          "passed": true,
+          "evidence": "OPENAI_API_KEY available",
+          "seconds": 0.01
+        },
+        {
+          "name": "live end-to-end suite passes",
+          "blocking": true,
+          "passed": true,
+          "evidence": "42 passed in 116.32s (0:01:56)",
+          "seconds": 117.07
+        },
+        {
+          "name": "division routing 6/6",
+          "blocking": true,
+          "passed": true,
+          "evidence": "division routing 6/6 (required 6/6)",
+          "seconds": 0.0
+        },
+        {
+          "name": "runs bounded by budget and answers complete",
+          "blocking": true,
+          "passed": true,
+          "evidence": "LLM calls/run min=8 max=12 (ceiling 20); over budget: none; missing sections: none",
+          "seconds": 0.0
+        },
+        {
+          "name": "no repeated specialists, no fabricated claims (FR-15/16)",
+          "blocking": true,
+          "passed": true,
+          "evidence": "repeated specialists: none; fabricated completion claims: none",
+          "seconds": 0.0
+        },
+        {
+          "name": "team routing \u22655/6",
+          "blocking": false,
+          "passed": true,
+          "evidence": "team routing 6/6 (target \u22655/6); misroutes: none",
+          "seconds": 0.0
+        }
+      ],
+      "timestamp": "2026-09-27T20:29:52+00:00"
+    },
+    {
+      "id": "G5",
+      "phase": "Release",
+      "decision": "GO",
+      "checks": [
+        {
+          "name": "README.md exists",
+          "blocking": true,
+          "passed": true,
+          "evidence": "found",
+          "seconds": 0.0
+        },
+        {
+          "name": "CHANGELOG.md exists",
+          "blocking": true,
+          "passed": true,
+          "evidence": "found",
+          "seconds": 0.0
+        },
+        {
+          "name": "version consistent across pyproject/__init__/CHANGELOG",
+          "blocking": true,
+          "passed": true,
+          "evidence": "pyproject=2.1.0, __init__ match=True, CHANGELOG entry=True",
+          "seconds": 0.0
+        },
+        {
+          "name": ".env is git-ignored",
+          "blocking": true,
+          "passed": true,
+          "evidence": ".env listed in .gitignore",
+          "seconds": 0.0
+        },
+        {
+          "name": "no secrets in source tree",
+          "blocking": true,
+          "passed": true,
+          "evidence": "files with secret-like strings: none",
+          "seconds": 0.96
+        }
+      ],
+      "timestamp": "2026-09-27T20:33:05+00:00"
+    }
+  ]
+}
