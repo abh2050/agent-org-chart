@@ -9,9 +9,8 @@ enforced in code, and every run returns a trace of the route it took.
 |---|---|---|---|---|---|---|
 | **2.1.0** | **6 / 6 GO** | **159 passed** | **94%** | **42 passed** | **6 / 6** | **8–12** |
 
-**Architecture page:** [claude.ai/artifact/PauBu2mdxA6a7JrrYGTREn](https://claude.ai/artifact/PauBu2mdxA6a7JrrYGTREn)
-has interactive light and dark versions of the diagrams below. The same page is in the repo at
-[docs/architecture.html](docs/architecture.html).
+**Architecture page:** [abh2050.github.io/agent-org-chart](https://abh2050.github.io/agent-org-chart/) has the diagrams below in light and
+dark mode, with the test results. It is served by GitHub Pages from [docs/index.html](docs/index.html).
 
 ---
 
@@ -263,7 +262,7 @@ Decisions are written to [docs/gate_log.md](docs/gate_log.md) and `reports/gate_
 | [docs/01_requirements.md](docs/01_requirements.md) | 20 functional and 9 non-functional requirements, each mapped to one of 28 acceptance tests |
 | [docs/02_design.md](docs/02_design.md) | Module map, state contracts, sequence diagram, 12 architecture decisions, failure modes |
 | [docs/gate_log.md](docs/gate_log.md) | Latest decision and evidence for every gate (generated) |
-| [docs/architecture.html](docs/architecture.html) | The architecture page (also [published](https://claude.ai/artifact/PauBu2mdxA6a7JrrYGTREn)) |
+| [docs/index.html](docs/index.html) | The architecture page, served at [abh2050.github.io/agent-org-chart](https://abh2050.github.io/agent-org-chart/) |
 | [CHANGELOG.md](CHANGELOG.md) | Release notes for 1.0.0 through 2.1.0 |
 
 To regenerate the diagrams and the architecture page, run `python docs/diagrams/build.py`.

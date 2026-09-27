@@ -1,16 +1,18 @@
 """Generate the architecture diagrams.
 
 Writes standalone SVGs (docs/diagrams/*.svg, embedded in README.md) and the architecture page
-(docs/architecture.html) from one source, so the README and the published page never drift apart.
+(docs/index.html, served by GitHub Pages) from one source, so the README and the page never drift apart.
+Pass --fragment PATH to also write the page without the document skeleton (for publishing as an Artifact).
 
 Each shape carries both an explicit light-theme color (for standalone rendering on GitHub) and a class
 (f-*/s-*) that the HTML page's CSS remaps to theme tokens for light and dark mode.
 
-Run: python docs/diagrams/build.py
+Run: python docs/diagrams/build.py [--fragment PATH]
 """
 
 from __future__ import annotations
 
+import argparse
 import html
 import json
 from pathlib import Path
@@ -113,7 +115,8 @@ def fig_hierarchy() -> str:
         used = order != "–"
         b += box(987, cy, 128, 32, name, fill="routebg" if used else "card", stroke="route" if used else "line",
                  size=11, tcolor="ink" if used else "muted")
-        b += f'<circle class="f-{"route" if used else "line"}" cx="912" cy="{cy}" r="9" fill="{P["route" if used else "line"]}"/>'
+        dot = "route" if used else "line"
+        b += f'<circle class="f-{dot}" cx="912" cy="{cy}" r="9" fill="{P[dot]}"/>'
         b += text(912, cy + 4, order, 11, "card", weight=700)
 
     # the trace this path produces
@@ -250,8 +253,24 @@ def main() -> None:
     page = template.replace("{{E2E_ROWS}}", rows)
     for name, content in rendered.items():
         page = page.replace("{{" + name + "}}", content)
-    (ROOT / "docs" / "architecture.html").write_text(page)
-    print("wrote", ", ".join(f"{n}.svg" for n in rendered), "and docs/architecture.html")
+    head, body = page.split("<main", 1)  # title, font links and styles belong in <head>
+    document = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+                '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+                '<meta name="description" content="Architecture, routing loop, real tools, SDLC gates and live test '
+                'results for agent-org-chart, a 4-level LangGraph multi-agent system.">\n'
+                '<style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}</style>\n'
+                f"{head}</head>\n<body>\n<main{body}\n</body>\n</html>\n")
+    (ROOT / "docs" / "index.html").write_text(document)
+    args = _args()
+    if args.fragment:
+        Path(args.fragment).write_text(page)
+    print("wrote", ", ".join(f"{n}.svg" for n in rendered), "and docs/index.html")
+
+
+def _args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Generate diagrams and the architecture page.")
+    parser.add_argument("--fragment", help="also write the page body without the document skeleton")
+    return parser.parse_args()
 
 
 if __name__ == "__main__":

@@ -211,10 +211,10 @@
           "blocking": true,
           "passed": true,
           "evidence": "files with secret-like strings: none",
-          "seconds": 0.96
+          "seconds": 1.08
         }
       ],
-      "timestamp": "2026-09-27T20:33:05+00:00"
+      "timestamp": "2026-09-27T21:43:06+00:00"
     }
   ]
 }

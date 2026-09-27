@@ -18,7 +18,7 @@ log = logging.getLogger("hierarchy_company.ui")
 
 MODELS = ("gpt-4.1-mini", "gpt-4.1-nano", "gpt-4.1", "gpt-4o-mini")
 DIAGRAMS = Path(__file__).resolve().parents[3] / "docs" / "diagrams"
-ARCHITECTURE_URL = "https://claude.ai/artifact/PauBu2mdxA6a7JrrYGTREn"
+ARCHITECTURE_URL = "https://abh2050.github.io/agent-org-chart/"
 
 EXAMPLES: dict[str, str] = {
     "Frontend · WCAG contrast and re-renders":
