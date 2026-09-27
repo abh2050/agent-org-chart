@@ -1,33 +1,67 @@
+<div align="center">
+
 # hierarchy-company
 
-**A 4-level hierarchical multi-agent system on LangGraph.** A CEO routes each task to one division director.
-The director routes it to one of six teams. The team supervisor consults its specialists one at a time,
-and each specialist calls **real tools**. Every decision is a structured choice, every loop has a limit
-enforced in code, and every run returns a trace of the route it took.
+### Engineering requests. Specialized agents. Traceable decisions.
 
-| Version | SDLC gates | Unit tests | Coverage | Live OpenAI tests | Routing accuracy | LLM calls / run |
-|---|---|---|---|---|---|---|
-| **2.1.0** | **6 / 6 GO** | **159 passed** | **94%** | **42 passed** | **6 / 6** | **8–12** |
+A bounded, four-level AI organization built with **Python, LangGraph and OpenAI**.
 
-**Architecture page:** [abh2050.github.io/agent-org-chart](https://abh2050.github.io/agent-org-chart/) has the diagrams below in light and
-dark mode, with the test results. It is served by GitHub Pages from [docs/index.html](docs/index.html).
+[Explore the project](https://abh2050.github.io/agent-org-chart/) · [Architecture](#how-it-works) · [Technology stack](#technology-stack) · [Run locally](#quick-start)
 
----
+</div>
 
-## Contents
+![A team collaborating around laptops, illustrating the organizational model behind hierarchy-company](docs/images/team-collaboration.jpg)
 
-- [How it works](#how-it-works)
-- [Web UI](#web-ui)
-- [Quick start](#quick-start)
-- [Tools](#tools)
-- [Test results](#test-results)
-- [How it was built: SDLC gates](#how-it-was-built-sdlc-gates)
-- [Documentation](#documentation)
-- [Configuration](#configuration)
-- [Project layout](#project-layout)
-- [Cost](#cost)
-- [Known limits](#known-limits)
-- [Extending](#extending)
+<sub>Illustrative photo by [Annie Spratt on Unsplash](https://unsplash.com/photos/QckxruozjRg), used under the [Unsplash License](https://unsplash.com/license). This is a stock photograph, not the project team.</sub>
+
+## The project in 30 seconds
+
+**Business problem:** Engineering requests arrive as broad problems—“review this deployment,” “investigate this slow query,” or “assess a leaked credential.” Turning those requests into useful advice requires finding the right expertise, supplying the right artifacts and understanding how a recommendation was reached. A general-purpose AI assistant can blur those responsibilities and make its work difficult to inspect.
+
+**Why this project was built:** To explore whether the delegation structure of a company can make AI-assisted engineering triage more focused, bounded and reviewable. A CEO agent selects a division, a director selects one team, and a supervisor consults specialists with domain-specific tools. The result includes an executive answer, specialist notes, tool outputs and a routing trace.
+
+**Who it serves:** Engineers and technical leads evaluating an assistant for initial reviews across frontend, backend, database, QA, DevOps and security. It runs as a Python library, CLI and local Streamlit application.
+
+**Intended value:** Less manual sorting of requests, clearer ownership of analysis and more inspectable recommendations. These are design goals; the repository measures routing and execution behavior, not business ROI or production productivity gains.
+
+| System design | Implementation | Recorded validation¹ |
+|---|---|---|
+| **4** levels of delegation | **18** specialists with **36** tools | **159** offline tests passed |
+| **2** divisions, **6** teams | **9** composed LangGraph graphs | **42** live tests passed |
+| **1** selected team per run | Library + CLI + Streamlit UI | **94%** unit coverage; **6/6** gates GO |
+
+<sub>¹ Recorded on September 27, 2026, for v2.1.0. Evidence: [gate report](reports/gate_report.json) and [live reference runs](reports/e2e_results.json). These are a recorded snapshot, not a continuously updated build badge.</sub>
+
+## Engineering highlights
+
+- **Architecture with explicit tradeoffs:** Nested graphs and a data-driven registry isolate responsibilities. Selecting one team limits fan-out but cannot solve a cross-team workflow in a single run.
+- **Control enforced by code:** Structured routing schemas exclude previously consulted specialists; turn and recursion limits bound the workflow.
+- **Inspectable execution:** Streaming events expose routes, tool inputs/results, specialist notes and LLM call counts.
+- **Honest tool boundaries:** Analyzers use supplied artifacts or external sources. Missing inputs and unavailable integrations are reported explicitly.
+- **Evidence-driven delivery:** Requirements map to acceptance tests, with six SDLC gates spanning requirements through release.
+
+## Technology stack
+
+| Layer | Technologies | Why they are here |
+|---|---|---|
+| Runtime & packaging | **Python 3.11+**, Hatchling, uv/pip | Typed application code, package builds, isolated environments and CLI entry points. Python 3.12 is used in the setup below. |
+| Graph orchestration | **LangGraph 1.x** | Nine composed state graphs, conditional routing, shared state and bounded execution. |
+| Agents & model access | **LangChain 1.x**, `langchain-core`, `langchain-openai`, **OpenAI** | Tool-calling specialists, message/callback interfaces and structured routing decisions; default model: `gpt-4.1-mini`. |
+| Validation & settings | **Pydantic 2**, Python dataclasses, **python-dotenv** | Enum-constrained routing schemas and validated environment configuration. |
+| Application UI | **Streamlit** (optional) | Streaming run events, file attachments, specialist notes, session history and JSON downloads. |
+| HTTP & integrations | **HTTPX**, **OSV.dev API**, **GitHub REST API** | Vulnerability lookups and GitHub Actions workflow status, with explicit failure reporting. |
+| SQL & data | **SQLGlot**, optional **Psycopg 3 / PostgreSQL**, `pg_stat_statements` | SQL AST analysis, read-only query plans, catalog inspection and slow-query statistics. |
+| Cloud integration | Optional **boto3 / AWS IAM** | Access-key last-used lookup via the AWS credential chain; local IAM policy analysis works without AWS. |
+| Parsing & analysis | **PyYAML**, Python `ast`, `HTMLParser`, XML, regex, `colorsys` | Manifest and Compose parsing, source inspection, test-report parsing, secret detection and WCAG contrast calculations. |
+| Verification | **pytest**, **pytest-cov**, Streamlit **AppTest** | Offline tests, coverage, UI checks and an opt-in live OpenAI test suite. |
+| Static quality | **Ruff**, **mypy**, `types-PyYAML` | Linting, import hygiene and type checking. |
+| Documentation & delivery | **HTML, CSS, SVG, Markdown**, **Git / GitHub Pages**, custom Python SDLC gates | Reproducible architecture diagrams, a static project showcase, change history and evidence-based release checks. |
+
+**Technologies the tools analyze or generate:** React/JSX, CSS, HTML, WCAG 2.1, OpenAPI 3, REST, JWT, Docker/Docker Compose, Kubernetes manifests and GitHub Actions workflows. These are supported engineering domains; the application itself is Python/Streamlit, and it does not deploy workloads to Docker, Kubernetes or AWS.
+
+## Explore
+
+[How it works](#how-it-works) · [Web UI](#web-ui) · [Quick start](#quick-start) · [All 36 tools](#tools) · [Test results](#test-results) · [SDLC gates](#how-it-was-built-sdlc-gates) · [Documentation](#documentation) · [Configuration](#configuration) · [Project layout](#project-layout) · [Cost](#cost) · [Known limits](#known-limits) · [Extending](#extending)
 
 ---
 
@@ -112,7 +146,7 @@ for item in stream_company("Review this IAM policy: {...}", build_company()):
 ```bash
 uv venv --python 3.12 .venv
 uv pip install --python .venv/bin/python -e ".[dev,postgres,aws]"
-echo "OPENAI_API_KEY=sk-..." > .env          # git-ignored
+# Add OPENAI_API_KEY to your environment or a local .env file (git-ignored).
 
 # Ask a question
 .venv/bin/hierarchy-company "An AWS key was committed to GitHub; assess the IAM blast radius and remediate."
@@ -173,7 +207,7 @@ repositories need the credentials listed under [Configuration](#configuration).
 
 ## Test results
 
-Last full run: **2026-09-27**, on `gpt-4.1-mini`.
+Recorded full run: **2026-09-27**, on `gpt-4.1-mini`. Results below are the repository’s saved validation snapshot.
 
 | Suite | What it proves | Tests | Result |
 |---|---|---|---|
@@ -265,7 +299,7 @@ Decisions are written to [docs/gate_log.md](docs/gate_log.md) and `reports/gate_
 | [docs/index.html](docs/index.html) | The architecture page, served at [abh2050.github.io/agent-org-chart](https://abh2050.github.io/agent-org-chart/) |
 | [CHANGELOG.md](CHANGELOG.md) | Release notes for 1.0.0 through 2.1.0 |
 
-To regenerate the diagrams and the architecture page, run `python docs/diagrams/build.py`.
+To regenerate the diagrams and the project page, run `python docs/diagrams/build.py`. Edit `docs/diagrams/architecture.template.html` for page changes so regeneration preserves them. Photo provenance is recorded in [docs/images/CREDITS.md](docs/images/CREDITS.md).
 
 ---
 
@@ -325,10 +359,7 @@ reports/             Latest gate report and live results (generated)
 | Team writer, director review, CEO answer | 3 |
 | **Measured** | **8–12** (ceiling of 20, checked at G4) |
 
-To reduce cost, you can:
-- Set `HC_MAX_SPECIALIST_TURNS=2`.
-- Pass a cheaper model for routing via `build_company(model=...)`.
-- Skip the team writer when there is only one note.
+To reduce model usage, set `HC_MAX_SPECIALIST_TURNS=2` or select a suitable model with `HC_MODEL`. The `build_company(model=...)` override applies to all levels. Skipping the team writer would require a code change; it is not a configuration option. The 20-call ceiling above is a validation check, not a runtime spending limit.
 
 ---
 
