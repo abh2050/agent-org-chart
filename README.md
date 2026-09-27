@@ -1,6 +1,6 @@
 <div align="center">
 
-# hierarchy-company
+# Hierarchy-company
 
 ### Engineering requests. Specialized agents. Traceable decisions.
 
